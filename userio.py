@@ -1,4 +1,5 @@
 import sys
+from file import *
 
 
 def get_input():
@@ -46,7 +47,12 @@ def approximate(x, y):
 
 def input_method():
     print("Enter the input file name or skip to enter data manually.")
-    return get_input()
+    while True:
+        ans = get_input()
+        if (not ans) or (check_file_exists(ans) and check_file_accessible(ans)):
+            return ans
+        else:
+            print(f"File '{ans}' does not exist or couldn't access file '{ans}'.")
 
 
 def output_method():
@@ -81,6 +87,10 @@ def get_points(n):
     while True:
         try:
             xi, yi = map(lambda t: float(t), get_input().split())
+            if xi in x:
+                ind = x.index(xi)
+                print(f"This x has already been entered and corresponds to y = {y[ind]}")
+                continue
             x.append(xi)
             y.append(yi)
             i += 1
@@ -93,4 +103,9 @@ def get_points(n):
 
 
 def get_data_file(name):
-    return [], []
+    x, y = read_data_from_file(name)
+    if x:
+        return x, y
+    else:
+        print(f"File '{name}' is invalid.")
+        close_application_appropriately()
