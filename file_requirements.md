@@ -1,0 +1,4 @@
+- At least 8 lines
+- Data has to start from the very first line of the file
+- Each line has to be a pair of two decimal numbers
+- Lines after the 12th one won't be read

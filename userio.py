@@ -1,9 +1,12 @@
-from math import inf
 import sys
+from math import inf
+
+from tabulate import tabulate
+
 from approximation import *
 from file import *
+from plotting import draw_plot
 from stats import *
-from tabulate import tabulate
 
 
 def get_input():
@@ -59,16 +62,19 @@ def approximate(x, y):
     best = "amogus"
     sd = inf
     for name in approximations.keys():
-        if approximations[name] < sd:
+        if approximations[name][2] < sd:
             best = name
-            sd = approximations[name]
+            sd = approximations[name][2]
     print(f"Best approximation by standard deviation: {best}")
+    draw_plot(x, approximations)
 
 
 def do_linear_approximation(x, y):
     phi, coefs = linear_approximation(x, y)
     print("Linear approximation:")
-    print(f"phi(x) = {coefs[0]} " + ('+' if coefs[1] >= 0 else '-') + f" {abs(coefs[1])}x")
+    label = (f"phi(x) = {format(coefs[0], '.5f')} " + ('+' if coefs[1] >= 0 else '-') +
+             f" {format(abs(coefs[1]), '.5f')}x")
+    print(label)
     print_approximation_results(phi, x, y)
     pearson = pearson_correlation(x, y)
     if abs(pearson) == 1:
@@ -87,55 +93,63 @@ def do_linear_approximation(x, y):
         pearson_conclusion = "no linear dependence"
     print(f"Pearson's correlation coefficient: {pearson}, {pearson_conclusion}")
     print()
-    return standard_deviation(x, y, phi)
+    return phi, label, standard_deviation(x, y, phi)
 
 
 def do_quadratic_approximation(x, y):
     phi, coefs = quadratic_approximation(x, y)
     print("Quadratic approximation:")
-    print(f"phi(x) = {coefs[0]} " + ('+' if coefs[1] >= 0 else '-') +
-          f" {abs(coefs[1])}x " + ('+' if coefs[2] >= 0 else '-') + f" {abs(coefs[2])}x^2")
+    label = (f"phi(x) = {format(coefs[0], '.5f')} " + ('+' if coefs[1] >= 0 else '-') +
+             f" {format(abs(coefs[1]), '.5f')}x " + ('+' if coefs[2] >= 0 else '-') +
+             f" {format(abs(coefs[2]), '.5f')}x^2")
+    print(label)
     print_approximation_results(phi, x, y)
     print()
-    return standard_deviation(x, y, phi)
+    return phi, label, standard_deviation(x, y, phi)
 
 
 def do_cubic_approximation(x, y):
     phi, coefs = cubic_approximation(x, y)
     print("Cubic approximation:")
-    print(f"phi(x) = {coefs[0]} " + ('+' if coefs[1] >= 0 else '-') +
-          f" {abs(coefs[1])}x " + ('+' if coefs[2] >= 0 else '-') + f" {abs(coefs[2])}x^2 " +
-          ('+' if coefs[3] >= 0 else '-') + f" {abs(coefs[3])}x^3")
+    label = (f"phi(x) = {format(coefs[0], '.5f')} " + ('+' if coefs[1] >= 0 else '-') +
+             f" {format(abs(coefs[1]), '.5f')}x " + ('+' if coefs[2] >= 0 else '-') +
+             f" {format(abs(coefs[2]), '.5f')}x^2 " +
+             ('+' if coefs[3] >= 0 else '-') + f" {format(abs(coefs[3]), '.5f')}x^3")
+    print(label)
     print_approximation_results(phi, x, y)
     print()
-    return standard_deviation(x, y, phi)
+    return phi, label, standard_deviation(x, y, phi)
 
 
 def do_logarithmic_approximation(x, y):
     phi, coefs = logarithmic_approximation(x, y)
     print("Logarithmic approximation:")
-    print(f"phi(x) = {coefs[0]}ln(x) " + ('+' if coefs[1] >= 0 else '-') + f" {abs(coefs[1])}")
+    label = (f"phi(x) = {format(coefs[0], '.5f')}ln(x) " + ('+' if coefs[1] >= 0 else '-') +
+             f" {format(abs(coefs[1]), '.5f')}")
+    print(label)
     print_approximation_results(phi, x, y)
     print()
-    return standard_deviation(x, y, phi)
+    return phi, label, standard_deviation(x, y, phi)
 
 
 def do_exponential_approximation(x, y):
     phi, coefs = exponential_approximation(x, y)
     print("Exponential approximation:")
-    print(f"phi(x) = {coefs[0]}e^({coefs[1]}x)")
+    label = f"phi(x) = {format(coefs[0], '.5f')}e^({format(coefs[1], '.5f')}x)"
+    print(label)
     print_approximation_results(phi, x, y)
     print()
-    return standard_deviation(x, y, phi)
+    return phi, label, standard_deviation(x, y, phi)
 
 
 def do_power_approximation(x, y):
     phi, coefs = power_approximation(x, y)
     print("Power approximation:")
-    print(f"phi(x) = {coefs[0]}x^{coefs[1]}")
+    label = f"phi(x) = {format(coefs[0], '.5f')}x^{format(coefs[1], '.5f')}"
+    print(label)
     print_approximation_results(phi, x, y)
     print()
-    return standard_deviation(x, y, phi)
+    return phi, label, standard_deviation(x, y, phi)
 
 
 def print_approximation_results(phi, x, y):
