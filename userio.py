@@ -39,6 +39,7 @@ def start():
     else:
         x, y = get_data_manual()
     out_method = output_method()
+    print()
     if out_method:
         with open(out_method, 'w') as out:
             sys.stdout = out
@@ -48,7 +49,6 @@ def start():
 
 
 def approximate(x, y):
-    print()
     approximations = {"linear": do_linear_approximation(x, y),
                       "quadratic": do_quadratic_approximation(x, y),
                       "cubic": do_cubic_approximation(x, y)}
@@ -66,7 +66,7 @@ def approximate(x, y):
             best = name
             sd = approximations[name][2]
     print(f"Best approximation by standard deviation: {best}")
-    draw_plot(x, approximations)
+    draw_plot(x, y, approximations)
 
 
 def do_linear_approximation(x, y):
@@ -145,7 +145,7 @@ def do_exponential_approximation(x, y):
 def do_power_approximation(x, y):
     phi, coefs = power_approximation(x, y)
     print("Power approximation:")
-    label = f"phi(x) = {format(coefs[0], '.5f')}x^{format(coefs[1], '.5f')}"
+    label = f"phi(x) = {format(coefs[0], '.5f')}x^({format(coefs[1], '.5f')})"
     print(label)
     print_approximation_results(phi, x, y)
     print()
